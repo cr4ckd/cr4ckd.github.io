@@ -225,7 +225,7 @@ export default function Catalog() {
           <div className="flex justify-between items-center h-16">
             <Link href="/">
               <h2 className="text-2xl font-light tracking-wide cursor-pointer">
-                RAYA Furniture
+                RAYA Wood Furniture
               </h2>
             </Link>
 
