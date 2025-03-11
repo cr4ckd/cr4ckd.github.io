@@ -33,13 +33,55 @@ export class MemStorage implements IStorage {
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000,
     });
-    
+
     // Create default admin user
     this.createUser({
       username: "admin",
       password: "admin123",
       isAdmin: true,
     } as InsertUser);
+
+    // Add sample products
+    const sampleProducts = [
+      {
+        name: "Modern Leather Sofa",
+        description: "Elegant leather sofa with clean lines and premium comfort",
+        price: 129900, // $1,299.00
+        imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800",
+        category: "Sofas"
+      },
+      {
+        name: "Minimalist Dining Table",
+        description: "Sleek dining table perfect for contemporary homes",
+        price: 79900, // $799.00
+        imageUrl: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=800",
+        category: "Tables"
+      },
+      {
+        name: "Scandinavian Armchair",
+        description: "Comfortable armchair with traditional Scandinavian design",
+        price: 45900, // $459.00
+        imageUrl: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800",
+        category: "Chairs"
+      },
+      {
+        name: "Modern Bed Frame",
+        description: "Contemporary bed frame with built-in storage",
+        price: 89900, // $899.00
+        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+        category: "Beds"
+      },
+      {
+        name: "Wooden Coffee Table",
+        description: "Handcrafted wooden coffee table with natural finish",
+        price: 34900, // $349.00
+        imageUrl: "https://images.unsplash.com/photo-1565191999040-e67537e12ce2?w=800",
+        category: "Tables"
+      }
+    ];
+
+    // Initialize sample products
+    sampleProducts.forEach(product => this.createProduct(product));
   }
 
   async getUser(id: number): Promise<User | undefined> {
