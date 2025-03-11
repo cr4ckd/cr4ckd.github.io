@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Product } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
-import { Loader2, ShoppingBag, LogIn, Menu, Search, ChevronUp } from "lucide-react";
+import { Loader2, ShoppingBag, LogIn, Search, ChevronUp, Moon, Sun, Globe } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,13 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { useState, useEffect } from "react";
 import {
   CommandDialog,
@@ -22,6 +29,24 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+
+const currencies = [
+  { code: 'USD', symbol: '$', name: 'US Dollar' },
+  { code: 'EUR', symbol: '€', name: 'Euro' },
+  { code: 'GBP', symbol: '£', name: 'British Pound' },
+  { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+];
+
+const languages = [
+  { code: 'en', name: 'English' },
+  { code: 'es', name: 'Español' },
+  { code: 'fr', name: 'Français' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'it', name: 'Italiano' },
+  { code: 'ja', name: '日本語' },
+];
 
 const categories = {
   "Living Room": [
@@ -100,6 +125,9 @@ export default function Catalog() {
   const { user } = useAuth();
   const [searchOpen, setSearchOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [currentCurrency, setCurrentCurrency] = useState(currencies[0]);
+  const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -110,8 +138,30 @@ export default function Catalog() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Update document theme when dark mode changes
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  }, [isDarkMode]);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const formatPrice = (price: number) => {
+    const exchangeRates: Record<string, number> = {
+      USD: 1,
+      EUR: 0.92,
+      GBP: 0.79,
+      JPY: 147.58,
+      AUD: 1.52,
+      CAD: 1.35,
+    };
+
+    const convertedPrice = price * exchangeRates[currentCurrency.code];
+    return new Intl.NumberFormat(currentLanguage.code, {
+      style: 'currency',
+      currency: currentCurrency.code,
+    }).format(convertedPrice / 100);
   };
 
   if (isLoading) {
@@ -124,8 +174,69 @@ export default function Catalog() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      {/* Top Bar */}
+      <div className="border-b bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-end items-center h-10 gap-4 text-sm">
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 text-xs gap-1">
+                  <Globe className="h-3 w-3" />
+                  {currentLanguage.name}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {languages.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang.code}
+                    onClick={() => setCurrentLanguage(lang)}
+                  >
+                    {lang.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Currency Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 text-xs gap-1">
+                  {currentCurrency.symbol}
+                  {currentCurrency.code}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {currencies.map((currency) => (
+                  <DropdownMenuItem
+                    key={currency.code}
+                    onClick={() => setCurrentCurrency(currency)}
+                  >
+                    {currency.symbol} {currency.code} - {currency.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+            >
+              {isDarkMode ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Navigation */}
+      <nav className="border-b bg-white/80 dark:bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <Link href="/">
@@ -260,7 +371,7 @@ export default function Catalog() {
                   </p>
                   <div className="flex justify-between items-center">
                     <p className="text-lg font-light">
-                      ${(product.price / 100).toFixed(2)}
+                      {formatPrice(product.price)}
                     </p>
                     <ShoppingBag className="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
                   </div>
