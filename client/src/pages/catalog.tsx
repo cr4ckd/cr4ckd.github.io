@@ -14,6 +14,75 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 
+const categories = {
+  "Living Room": [
+    "Sofas & Couches",
+    "Sectionals",
+    "Coffee Tables",
+    "End Tables",
+    "TV Stands & Media Consoles",
+    "Recliners",
+    "Accent Chairs",
+    "Bookshelves",
+    "Ottomans & Poufs"
+  ],
+  "Bedroom": [
+    "Beds",
+    "Nightstands",
+    "Dressers & Chests",
+    "Wardrobes & Armoires",
+    "Bedside Tables",
+    "Headboards",
+    "Vanity Tables",
+    "Mattresses"
+  ],
+  "Dining Room": [
+    "Dining Tables",
+    "Dining Chairs",
+    "Bar Stools",
+    "Buffets & Sideboards",
+    "China Cabinets",
+    "Benches"
+  ],
+  "Office": [
+    "Desks",
+    "Office Chairs",
+    "Bookcases",
+    "Filing Cabinets",
+    "Conference Tables",
+    "Shelving Units"
+  ],
+  "Outdoor": [
+    "Patio Tables",
+    "Outdoor Chairs",
+    "Lounge Chairs",
+    "Hammocks",
+    "Outdoor Sofas",
+    "Gazebos & Pergolas",
+    "Fire Pits"
+  ],
+  "Storage": [
+    "Cabinets & Cupboards",
+    "Shoe Racks",
+    "Coat Racks & Hall Trees",
+    "Storage Bins & Baskets",
+    "Floating Shelves"
+  ],
+  "Kids & Nursery": [
+    "Cribs & Bassinets",
+    "Kids' Beds & Bunk Beds",
+    "Changing Tables",
+    "Toy Storage",
+    "Kids' Desks & Chairs"
+  ],
+  "Accent & Decor": [
+    "Console Tables",
+    "Accent Cabinets",
+    "Mirrors",
+    "Room Dividers"
+  ]
+};
+
 export default function Catalog() {
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
@@ -29,8 +98,6 @@ export default function Catalog() {
     );
   }
 
-  const categories = Array.from(new Set(products?.map(p => p.category)));
-
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -45,39 +112,26 @@ export default function Catalog() {
 
             <NavigationMenu>
               <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm font-light">Browse</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[200px] gap-2 p-4">
-                      {categories.map((category) => (
-                        <li key={category}>
-                          <NavigationMenuLink asChild>
-                            <a className="block p-2 hover:bg-accent rounded-md text-sm">
-                              {category}
-                            </a>
-                          </NavigationMenuLink>
-                        </li>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm font-light">Collections</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[200px] gap-2 p-4">
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <a className="block p-2 hover:bg-accent rounded-md text-sm">Summer 2025</a>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <a className="block p-2 hover:bg-accent rounded-md text-sm">Coastal Living</a>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                {Object.entries(categories).map(([category, subcategories]) => (
+                  <NavigationMenuItem key={category}>
+                    <NavigationMenuTrigger className="text-sm font-light">
+                      {category}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2">
+                        {subcategories.map((subcategory) => (
+                          <li key={subcategory}>
+                            <NavigationMenuLink asChild>
+                              <a className="block p-2 hover:bg-accent rounded-md text-sm">
+                                {subcategory}
+                              </a>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                ))}
               </NavigationMenuList>
             </NavigationMenu>
 
