@@ -8,13 +8,13 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   getProducts(): Promise<Product[]>;
   getProduct(id: number): Promise<Product | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product>;
   deleteProduct(id: number): Promise<void>;
-  
+
   sessionStore: session.Store;
 }
 
@@ -48,21 +48,21 @@ export class MemStorage implements IStorage {
         description: "Elegant leather sofa with clean lines and premium comfort",
         price: 129900, // $1,299.00
         imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800",
-        category: "Sofas"
+        category: "Sofas & Couches"
       },
       {
         name: "Minimalist Dining Table",
         description: "Sleek dining table perfect for contemporary homes",
         price: 79900, // $799.00
         imageUrl: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=800",
-        category: "Tables"
+        category: "Dining Tables"
       },
       {
         name: "Scandinavian Armchair",
         description: "Comfortable armchair with traditional Scandinavian design",
         price: 45900, // $459.00
         imageUrl: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800",
-        category: "Chairs"
+        category: "Accent Chairs"
       },
       {
         name: "Modern Bed Frame",
@@ -76,12 +76,16 @@ export class MemStorage implements IStorage {
         description: "Handcrafted wooden coffee table with natural finish",
         price: 34900, // $349.00
         imageUrl: "https://images.unsplash.com/photo-1565191999040-e67537e12ce2?w=800",
-        category: "Tables"
+        category: "Coffee Tables"
       }
     ];
 
     // Initialize sample products
     sampleProducts.forEach(product => this.createProduct(product));
+  }
+
+  generateProductCode(id: number): string {
+    return `IS-${String(id).padStart(4, '0')}`;
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -111,7 +115,8 @@ export class MemStorage implements IStorage {
 
   async createProduct(product: InsertProduct): Promise<Product> {
     const id = this.currentProductId++;
-    const newProduct = { ...product, id };
+    const productCode = this.generateProductCode(id);
+    const newProduct = { ...product, id, productCode };
     this.products.set(id, newProduct);
     return newProduct;
   }
@@ -119,7 +124,7 @@ export class MemStorage implements IStorage {
   async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product> {
     const existing = await this.getProduct(id);
     if (!existing) throw new Error("Product not found");
-    
+
     const updated = { ...existing, ...product };
     this.products.set(id, updated);
     return updated;

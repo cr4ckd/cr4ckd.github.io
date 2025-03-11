@@ -11,6 +11,7 @@ export const users = pgTable("users", {
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
+  productCode: text("product_code").notNull().unique(),
   name: text("name").notNull(),
   description: text("description").notNull(),
   price: integer("price").notNull(), // stored in cents
@@ -25,6 +26,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
+  productCode: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

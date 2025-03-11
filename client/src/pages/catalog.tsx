@@ -126,6 +126,7 @@ export default function Catalog() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [currentCurrency, setCurrentCurrency] = useState(currencies[0]);
   const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -156,6 +157,10 @@ export default function Catalog() {
       currency: currentCurrency.code,
     }).format(convertedPrice / 100);
   };
+
+  const filteredProducts = selectedCategory
+    ? products?.filter(p => p.category === selectedCategory)
+    : products;
 
   if (isLoading) {
     return (
@@ -236,7 +241,10 @@ export default function Catalog() {
                         {subcategories.map((subcategory) => (
                           <li key={subcategory}>
                             <NavigationMenuLink asChild>
-                              <a className="block p-2 hover:bg-accent rounded-md text-sm">
+                              <a
+                                onClick={() => setSelectedCategory(subcategory)}
+                                className="block p-2 hover:bg-accent rounded-md text-sm cursor-pointer"
+                              >
                                 {subcategory}
                               </a>
                             </NavigationMenuLink>
@@ -278,7 +286,13 @@ export default function Catalog() {
           {Object.entries(categories).map(([category, subcategories]) => (
             <CommandGroup key={category} heading={category}>
               {subcategories.map((subcategory) => (
-                <CommandItem key={subcategory}>
+                <CommandItem
+                  key={subcategory}
+                  onSelect={() => {
+                    setSelectedCategory(subcategory);
+                    setSearchOpen(false);
+                  }}
+                >
                   {subcategory}
                 </CommandItem>
               ))}
@@ -294,6 +308,12 @@ export default function Catalog() {
         </h1>
         <p className="mt-6 text-muted-foreground max-w-2xl mx-auto text-lg font-light leading-relaxed">
           Discover our curated collection of furniture that brings the serenity of coastal living to your home.
+          {selectedCategory && (
+            <>
+              <br />
+              <span className="text-primary">Browsing: {selectedCategory}</span>
+            </>
+          )}
         </p>
       </header>
 
@@ -326,15 +346,18 @@ export default function Catalog() {
       <main className="container mx-auto px-4 pb-32">
         <h2 className="text-2xl font-light tracking-wide mb-8">All Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {products?.map((product) => (
+          {filteredProducts?.map((product) => (
             <Link key={product.id} href={`/product/${product.id}`}>
               <Card className="cursor-pointer group hover:shadow-lg transition-all duration-500 border-0 bg-transparent">
-                <div className="aspect-square overflow-hidden rounded-lg">
+                <div className="aspect-square overflow-hidden rounded-lg relative">
                   <img
                     src={product.imageUrl}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  <span className="absolute top-4 right-4 bg-primary/90 text-white px-3 py-1 rounded-full text-sm font-medium tracking-wider">
+                    {product.productCode}
+                  </span>
                 </div>
                 <CardContent className="px-2 pt-6">
                   <div className="flex justify-between items-start mb-3">
