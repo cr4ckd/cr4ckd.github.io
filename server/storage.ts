@@ -25,6 +25,10 @@ export class MemStorage implements IStorage {
   private currentProductId: number;
   sessionStore: session.Store;
 
+  generateProductCode(id: number): string {
+    return `RY-${String(id).padStart(4, '0')}`;
+  }
+
   constructor() {
     this.users = new Map();
     this.products = new Map();
@@ -44,48 +48,44 @@ export class MemStorage implements IStorage {
     // Add sample products
     const sampleProducts = [
       {
-        name: "Modern Leather Sofa",
-        description: "Elegant leather sofa with clean lines and premium comfort",
-        price: 129900, // $1,299.00
-        imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800",
-        category: "Sofas & Couches"
-      },
-      {
-        name: "Minimalist Dining Table",
-        description: "Sleek dining table perfect for contemporary homes",
-        price: 79900, // $799.00
+        name: "Teak Wood Dining Table",
+        description: "Handcrafted dining table made from premium Indonesian teak wood with traditional joinery techniques",
+        price: 299900, // $2,999.00
         imageUrl: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=800",
         category: "Dining Tables"
       },
       {
-        name: "Scandinavian Armchair",
-        description: "Comfortable armchair with traditional Scandinavian design",
-        price: 45900, // $459.00
+        name: "Javanese Carved Armchair",
+        description: "Intricately carved armchair showcasing traditional Javanese motifs, handmade by master craftsmen",
+        price: 159900, // $1,599.00
         imageUrl: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800",
         category: "Accent Chairs"
       },
       {
-        name: "Modern Bed Frame",
-        description: "Contemporary bed frame with built-in storage",
+        name: "Sumatra Coffee Table",
+        description: "Solid wood coffee table featuring exotic Indonesian hardwood with natural grain patterns",
         price: 89900, // $899.00
-        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
-        category: "Beds"
-      },
-      {
-        name: "Wooden Coffee Table",
-        description: "Handcrafted wooden coffee table with natural finish",
-        price: 34900, // $349.00
         imageUrl: "https://images.unsplash.com/photo-1565191999040-e67537e12ce2?w=800",
         category: "Coffee Tables"
+      },
+      {
+        name: "Balinese Storage Cabinet",
+        description: "Traditional storage cabinet with hand-carved Balinese patterns and premium hardware",
+        price: 239900, // $2,399.00
+        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+        category: "Cabinets & Cupboards"
+      },
+      {
+        name: "Indonesian Teak Bed Frame",
+        description: "King-size bed frame crafted from sustainable Indonesian teak with traditional woodworking techniques",
+        price: 399900, // $3,999.00
+        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+        category: "Beds"
       }
     ];
 
     // Initialize sample products
     sampleProducts.forEach(product => this.createProduct(product));
-  }
-
-  generateProductCode(id: number): string {
-    return `IS-${String(id).padStart(4, '0')}`;
   }
 
   async getUser(id: number): Promise<User | undefined> {

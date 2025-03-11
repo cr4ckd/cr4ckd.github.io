@@ -225,7 +225,7 @@ export default function Catalog() {
           <div className="flex justify-between items-center h-16">
             <Link href="/">
               <h2 className="text-2xl font-light tracking-wide cursor-pointer">
-                ISLA Living
+                RAYA Furniture
               </h2>
             </Link>
 
@@ -278,36 +278,13 @@ export default function Catalog() {
         </div>
       </nav>
 
-      {/* Search Command Palette */}
-      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <CommandInput placeholder="Search for furniture..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          {Object.entries(categories).map(([category, subcategories]) => (
-            <CommandGroup key={category} heading={category}>
-              {subcategories.map((subcategory) => (
-                <CommandItem
-                  key={subcategory}
-                  onSelect={() => {
-                    setSelectedCategory(subcategory);
-                    setSearchOpen(false);
-                  }}
-                >
-                  {subcategory}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          ))}
-        </CommandList>
-      </CommandDialog>
-
       {/* Hero Section */}
       <header className="py-32 px-4 text-center bg-gradient-to-b from-primary/5">
         <h1 className="text-5xl md:text-6xl font-light tracking-wide text-primary">
-          Island-Inspired Living
+          Indonesian Craftsmanship
         </h1>
         <p className="mt-6 text-muted-foreground max-w-2xl mx-auto text-lg font-light leading-relaxed">
-          Discover our curated collection of furniture that brings the serenity of coastal living to your home.
+          Discover our exquisite collection of handcrafted wooden furniture, expertly made by master artisans in Indonesia.
           {selectedCategory && (
             <>
               <br />
@@ -316,6 +293,16 @@ export default function Catalog() {
           )}
         </p>
       </header>
+
+      {/* About Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl font-light tracking-wide mb-6">Heritage of Excellence</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Since our founding, Raya Furniture has been at the forefront of exporting premium, handcrafted wooden furniture from Indonesia to discerning clients worldwide. Each piece tells a story of traditional craftsmanship merged with contemporary design, created by skilled artisans using time-honored techniques.
+          </p>
+        </div>
+      </section>
 
       {/* Featured Collection */}
       <section className="container mx-auto px-4 py-16">
@@ -356,7 +343,7 @@ export default function Catalog() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <span className="absolute top-4 right-4 bg-primary/90 text-white px-3 py-1 rounded-full text-sm font-medium tracking-wider">
-                    {product.productCode}
+                    {product.productCode.replace("IS-", "RY-")} {/* Updated product code */}
                   </span>
                 </div>
                 <CardContent className="px-2 pt-6">
@@ -383,6 +370,29 @@ export default function Catalog() {
           ))}
         </div>
       </main>
+
+      {/* Search Command Palette */}
+      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <CommandInput placeholder="Search for furniture..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          {Object.entries(categories).map(([category, subcategories]) => (
+            <CommandGroup key={category} heading={category}>
+              {subcategories.map((subcategory) => (
+                <CommandItem
+                  key={subcategory}
+                  onSelect={() => {
+                    setSelectedCategory(subcategory);
+                    setSearchOpen(false);
+                  }}
+                >
+                  {subcategory}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
+        </CommandList>
+      </CommandDialog>
 
       {/* Back to Top Button */}
       {showBackToTop && (
