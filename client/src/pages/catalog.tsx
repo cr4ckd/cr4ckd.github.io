@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Product } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
-import { Loader2, ShoppingBag, LogIn, Search, ChevronUp, Moon, Sun, Globe } from "lucide-react";
+import { Loader2, ShoppingBag, LogIn, Search, ChevronUp, Globe } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useState, useEffect } from "react";
 import {
@@ -125,7 +124,6 @@ export default function Catalog() {
   const { user } = useAuth();
   const [searchOpen, setSearchOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentCurrency, setCurrentCurrency] = useState(currencies[0]);
   const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
 
@@ -137,11 +135,6 @@ export default function Catalog() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    // Update document theme when dark mode changes
-    document.documentElement.classList.toggle('dark', isDarkMode);
-  }, [isDarkMode]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -217,26 +210,12 @@ export default function Catalog() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setIsDarkMode(!isDarkMode)}
-            >
-              {isDarkMode ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
           </div>
         </div>
       </div>
 
       {/* Main Navigation */}
-      <nav className="border-b bg-white/80 dark:bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+      <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <Link href="/">
