@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Product } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
-import { Loader2, ShoppingBag, LogIn, Menu } from "lucide-react";
+import { Loader2, ShoppingBag, LogIn, Menu, Search, ChevronUp } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,15 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { useState, useEffect } from "react";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 const categories = {
   "Living Room": [
@@ -89,6 +98,21 @@ export default function Catalog() {
   });
 
   const { user } = useAuth();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 500);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (isLoading) {
     return (
@@ -136,6 +160,9 @@ export default function Catalog() {
             </NavigationMenu>
 
             <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)}>
+                <Search className="h-4 w-4" />
+              </Button>
               {user?.isAdmin ? (
                 <Link href="/admin">
                   <Button variant="ghost" className="text-sm font-light">Admin</Button>
@@ -153,6 +180,23 @@ export default function Catalog() {
         </div>
       </nav>
 
+      {/* Search Command Palette */}
+      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <CommandInput placeholder="Search for furniture..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          {Object.entries(categories).map(([category, subcategories]) => (
+            <CommandGroup key={category} heading={category}>
+              {subcategories.map((subcategory) => (
+                <CommandItem key={subcategory}>
+                  {subcategory}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
+        </CommandList>
+      </CommandDialog>
+
       {/* Hero Section */}
       <header className="py-32 px-4 text-center bg-gradient-to-b from-primary/5">
         <h1 className="text-5xl md:text-6xl font-light tracking-wide text-primary">
@@ -163,8 +207,34 @@ export default function Catalog() {
         </p>
       </header>
 
+      {/* Featured Collection */}
+      <section className="container mx-auto px-4 py-16">
+        <h2 className="text-2xl font-light tracking-wide mb-8">Featured Collection</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {products?.slice(0, 3).map((product) => (
+            <Link key={product.id} href={`/product/${product.id}`}>
+              <Card className="cursor-pointer group hover:shadow-lg transition-all duration-500 border-0 bg-transparent">
+                <div className="aspect-[4/5] overflow-hidden rounded-lg">
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <CardContent className="px-2 pt-6">
+                  <h3 className="text-xl font-light tracking-wide group-hover:text-primary transition-colors">
+                    {product.name}
+                  </h3>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Product Grid */}
       <main className="container mx-auto px-4 pb-32">
+        <h2 className="text-2xl font-light tracking-wide mb-8">All Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {products?.map((product) => (
             <Link key={product.id} href={`/product/${product.id}`}>
@@ -200,6 +270,16 @@ export default function Catalog() {
           ))}
         </div>
       </main>
+
+      {/* Back to Top Button */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-primary/90 transition-all duration-300"
+        >
+          <ChevronUp className="h-6 w-6" />
+        </button>
+      )}
     </div>
   );
 }
